@@ -1,4 +1,4 @@
-name: Unzip and Auto Build APK
+name: Build Android APK
 
 on:
   push:
@@ -19,22 +19,27 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
-      - name: Extract ZIP File
+      - name: Extract Project Files
         run: |
-          unzip -o FreezerFrenzyAuto_v0.3.zip -d extracted_files
-          if [ -d "extracted_files/FreezerFrenzyAuto_v0.3" ]; then
-            cp -r extracted_files/FreezerFrenzyAuto_v0.3/* .
+          mkdir -p temp_extracted
+          unzip -q FreezerFrenzyAuto_v0.3.zip -d temp_extracted
+          PROJECT_PATH=$(find temp_extracted -name "build.gradle" -o -name "build.gradle.kts" | head -n 1 | xargs dirname)
+          if [ -n "$PROJECT_PATH" ]; then
+            echo "Project root found at: $PROJECT_PATH"
+            cp -r "$PROJECT_PATH"/* .
           else
-            cp -r extracted_files/* .
+            cp -r temp_extracted/* .
           fi
 
-      - name: Generate Gradle Wrapper & Build APK
+      - name: Setup Gradle and Build APK
         run: |
-          gradle wrapper --gradle-version 7.5.1
+          if [ ! -f "gradlew" ]; then
+            gradle wrapper --gradle-version 7.5.1
+          fi
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
 
-      - name: Upload APK
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: FreezerFrenzy-APK
