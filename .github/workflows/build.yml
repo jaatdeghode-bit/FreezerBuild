@@ -13,21 +13,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 11
-        uses: actions/setup-java@v4
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-
-      - name: Extract and Setup Project
-        run: mkdir -p extracted && unzip -o FreezerFrenzyAuto_v0.3.zip -d extracted && cp -r $(find extracted -name "build.gradle*" | head -n 1 | xargs dirname)/* .
-
-      - name: Build APK
-        run: gradle wrapper --gradle-version 7.5.1 && chmod +x gradlew && ./gradlew assembleDebug --no-daemon
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: FreezerFrenzy-APK
-          path: '**/build/outputs/apk/debug/*.apk'
+      - name: Inspect Files
+        run: |
+          echo "=== REPO FILES ==="
+          ls -la
+          echo "=== UNZIPPING ZIP FILE ==="
+          unzip -o FreezerFrenzyAuto_v0.3.zip -d extracted || true
+          echo "=== FINDING GRADLE FILES ==="
+          find extracted -name "build.gradle*" || echo "No build.gradle found!"
+          
           
