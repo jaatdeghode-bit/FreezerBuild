@@ -1,5 +1,4 @@
-
-        name: Unzip and Auto Build APK
+name: Unzip and Auto Build APK
 
 on:
   push:
@@ -20,12 +19,18 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
-      - name: Extract ZIP Directly
+      - name: Extract ZIP File
         run: |
-          unzip -o FreezerFrenzyAuto_v0.3.zip
+          unzip -o FreezerFrenzyAuto_v0.3.zip -d extracted_files
+          if [ -d "extracted_files/FreezerFrenzyAuto_v0.3" ]; then
+            cp -r extracted_files/FreezerFrenzyAuto_v0.3/* .
+          else
+            cp -r extracted_files/* .
+          fi
 
-      - name: Build APK with Gradle
+      - name: Generate Gradle Wrapper & Build APK
         run: |
+          gradle wrapper --gradle-version 7.5.1
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
 
