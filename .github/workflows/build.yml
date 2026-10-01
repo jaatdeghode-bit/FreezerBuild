@@ -32,9 +32,9 @@ jobs:
 
       - name: Setup Gradle and Build APK
         run: |
-          gradle wrapper --gradle-version 8.2.1
+          gradle wrapper --gradle-version 7.4.2
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon --scan
+          ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
