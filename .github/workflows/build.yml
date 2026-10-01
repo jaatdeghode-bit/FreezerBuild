@@ -19,7 +19,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Extract Project Files
+      - name: Extract and Completely Strip Problematic Plugin Blocks
         run: |
           mkdir -p temp_extracted
           unzip -q FreezerFrenzyAuto_v0.3.zip -d temp_extracted
@@ -29,10 +29,20 @@ jobs:
           else
             cp -r temp_extracted/* .
           fi
+          
+          # Forcefully remove pluginManagement block from settings.gradle if it exists to stop version errors
+          if [ -f "settings.gradle" ]; then
+            echo "Cleaning settings.gradle..."
+            sed -i '/pluginManagement/,/}/d' settings.gradle || true
+          fi
+          if [ -f "settings.gradle.kts" ]; then
+            echo "Cleaning settings.gradle.kts..."
+            sed -i '/pluginManagement/,/}/d' settings.gradle.kts || true
+          fi
 
       - name: Setup Gradle and Build APK
         run: |
-          gradle wrapper --gradle-version 7.3
+          gradle wrapper --gradle-version 8.2.1
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
 
