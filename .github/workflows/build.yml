@@ -19,27 +19,22 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
-      - name: Unzip Project & Find Root
+      - name: Unzip Project
         run: |
           mkdir -p extracted
           unzip -o FreezerFrenzyAuto_v0.3.zip -d extracted
-          
           TARGET_DIR=$(find extracted -name "settings.gradle*" -o -name "build.gradle*" | head -n 1 | xargs dirname)
-          
           if [ -n "$TARGET_DIR" ]; then
-            echo "Found Android root at: $TARGET_DIR"
             cp -r $TARGET_DIR/* .
           else
             cp -r extracted/* .
           fi
 
-      - name: Setup Gradle Wrapper
+      - name: Build APK with Gradle
         run: |
           gradle wrapper --gradle-version 7.4.2 --distribution-type bin
           chmod +x gradlew
-
-      - name: Build APK with Gradle
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
+          ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
