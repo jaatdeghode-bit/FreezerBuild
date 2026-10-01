@@ -1,4 +1,4 @@
-name: Unzip and Build APK
+name: Unzip and Auto Build APK
 
 on:
   push:
@@ -19,15 +19,23 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Extract ZIP File
+      - name: Unzip Project & Move Files
         run: |
-          unzip -o FreezerFrenzyAuto_v0.3.zip -d extracted_project
-          cp -r extracted_project/* . || true
+          mkdir -p extracted
+          unzip -o FreezerFrenzyAuto_v0.3.zip -d extracted
+          if [ -d extracted/FreezerFrenzyAuto_v0.3 ]; then
+            cp -r extracted/FreezerFrenzyAuto_v0.3/* .
+          elif [ -d extracted/* ]; then
+            cp -r extracted/*/* . || true
+            cp -r extracted/* . || true
+          else
+            cp -r extracted/* .
+          fi
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Make Gradle Executable & Build
+      - name: Build APK
         run: |
           if [ ! -f gradlew ]; then
             gradle wrapper --gradle-version 8.1.1
@@ -39,5 +47,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: FreezerFrenzy-APK
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: '**/build/outputs/apk/debug/*.apk'
           
