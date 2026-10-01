@@ -1,4 +1,5 @@
-name: Unzip and Auto Build APK
+
+        name: Unzip and Auto Build APK
 
 on:
   push:
@@ -19,20 +20,12 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
-      - name: Extract Project Files
+      - name: Extract ZIP Directly
         run: |
-          mkdir -p extracted
-          unzip -o FreezerFrenzyAuto_v0.3.zip -d extracted
-          TARGET_DIR=$(find extracted -name "build.gradle" -o -name "build.gradle.kts" | head -n 1 | xargs dirname)
-          if [ -n "$TARGET_DIR" ] && [ "$TARGET_DIR" != "extracted" ]; then
-            cp -r "$TARGET_DIR"/* .
-          else
-            cp -r extracted/* .
-          fi
+          unzip -o FreezerFrenzyAuto_v0.3.zip
 
       - name: Build APK with Gradle
         run: |
-          gradle wrapper --gradle-version 7.5.1
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
 
