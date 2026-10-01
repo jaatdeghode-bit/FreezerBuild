@@ -13,10 +13,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK 11
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '11'
           distribution: 'temurin'
 
       - name: Unzip Project & Find Root
@@ -24,20 +24,18 @@ jobs:
           mkdir -p extracted
           unzip -o FreezerFrenzyAuto_v0.3.zip -d extracted
           
-          # Find directory containing settings.gradle or build.gradle
           TARGET_DIR=$(find extracted -name "settings.gradle*" -o -name "build.gradle*" | head -n 1 | xargs dirname)
           
           if [ -n "$TARGET_DIR" ]; then
             echo "Found Android root at: $TARGET_DIR"
             cp -r $TARGET_DIR/* .
           else
-            echo "Fallback copy"
             cp -r extracted/* .
           fi
 
       - name: Setup Gradle Wrapper
         run: |
-          gradle wrapper --gradle-version 7.6.1 --distribution-type bin
+          gradle wrapper --gradle-version 7.4.2 --distribution-type bin
           chmod +x gradlew
 
       - name: Build APK with Gradle
