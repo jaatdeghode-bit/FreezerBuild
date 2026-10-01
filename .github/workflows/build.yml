@@ -19,7 +19,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Extract and Patch Project Files
+      - name: Extract Project Files
         run: |
           mkdir -p temp_extracted
           unzip -q FreezerFrenzyAuto_v0.3.zip -d temp_extracted
@@ -29,17 +29,10 @@ jobs:
           else
             cp -r temp_extracted/* .
           fi
-          
-          # Fix plugin version issue automatically if present in build.gradle
-          if [ -f "build.gradle" ]; then
-            echo "Patching build.gradle to fix plugin versions..."
-            sed -i 's/id '\''com.android.application'\''/id '\''com.android.application'\'' version '\''7.4.2'\''/g' build.gradle || true
-            sed -i 's/id '\''com.android.library'\''/id '\''com.android.library'\'' version '\''7.4.2'\''/g' build.gradle || true
-          fi
 
       - name: Setup Gradle and Build APK
         run: |
-          gradle wrapper --gradle-version 7.5.1
+          gradle wrapper --gradle-version 7.3
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
 
