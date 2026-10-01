@@ -32,9 +32,7 @@ jobs:
 
       - name: Setup Gradle and Build APK
         run: |
-          if [ ! -f "gradlew" ]; then
-            gradle wrapper --gradle-version 7.5.1
-          fi
+          gradle wrapper --gradle-version 8.2.1
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
 
